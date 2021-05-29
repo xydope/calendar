@@ -1,0 +1,11 @@
+.calendar {
+}
+
+.calendar__body {
+    text-align: center;
+}
+
+
+.date--inactive {
+    color: rgb(185, 185, 185);
+}
