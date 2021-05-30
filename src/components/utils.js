@@ -1,27 +1,20 @@
 const DAYS_IN_WEEK = 7;
 const TODAY = new Date()
 
-
 //кол-во дней в месяце
 export const getLengthOfMonth = (date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
 }
 
-//день недели первого дня месяца
-
-export const getFirstDayOfMonth = (date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getUTCDay()
-}
-
 //Массив всех дней месяца
 export const getDaysOfMonth = (date) => {
-    const { month, year, length } = getDateInfo(date)
+    const { year, month, length } = getDateInfo(date)
     return [...new Array(length)].map((day, index) =>
         new Date(year, month, index + 1))
-
 }
 
-const getDateInfo = (date) => {
+
+export const getDateInfo = (date) => {
     return {
         date: date.getDate(),
         day: date.getUTCDay(),
@@ -34,6 +27,9 @@ const getDateInfo = (date) => {
 
 //Массив недель месяца
 export const getWeaks = (daysOfMonth) => {
+    if (!daysOfMonth.length)
+        return []
+
     const [head] = daysOfMonth
     const { date, day, month, year } = getDateInfo(head)
 
@@ -52,7 +48,7 @@ export const getWeaks = (daysOfMonth) => {
 
         //дни следующего месяца
         const monthAfter = [...new Array(DAYS_IN_WEEK - daysOfMonth.length)]
-            .map((item, index) => new Date(year, month + 1, index))
+            .map((item, index) => new Date(year, month + 1, index + 1))
 
         return [[...daysOfMonth, ...monthAfter]]
     }
@@ -63,3 +59,8 @@ export const getWeaks = (daysOfMonth) => {
 
 }
 
+
+export const monthToArray = (date) => {
+    const daysOfMonth = getDaysOfMonth(date)
+    return getWeaks(daysOfMonth)
+}

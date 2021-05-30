@@ -5,7 +5,20 @@
     text-align: center;
 }
 
+.calendar__date {
+    cursor: pointer;
+    user-select: none;
+}
 
+.calendar__date:hover {
+    background: darkgray;
+    color:white;
+}
 .date--inactive {
     color: rgb(185, 185, 185);
 }
+
+.date--today {
+    background: lightgreen;
+}
+

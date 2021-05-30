@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { getDaysOfMonth, getWeaks } from './utils'
+import React, { useState, useEffect } from 'react'
+import { monthToArray, getDateInfo } from './utils'
 
 const PARAMS = {
     days: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
@@ -13,13 +13,42 @@ export const App = ({ initDate = new Date() }) => {
         active: initDate
     })
 
-    const daysOfMonth = getDaysOfMonth(state.active)
-    const weaksOfMonth = getWeaks(daysOfMonth)
+    const handleChangeActiveYear = (argument) => {
+        setState(prev => {
+            const { year, month } = getDateInfo(prev.active);
+            return { ...prev, active: new Date(year + argument, month, 1) }
+        })
+    }
+
+    const handleChangeActiveMonth = (event) => {
+
+        const month = PARAMS.months.indexOf(event.target.value)
+
+        setState(prev => {
+            const year = prev.active.getFullYear();
+            return { ...prev, active: new Date(year, month, 1) }
+        })
+    }
 
     return <div className="calendar">
-        <select name="month">
-            {PARAMS.months.map(month => <option value={month} key={month}>{month}</option>)}
-        </select>
+        <div className="calendar__nav">
+            <div>
+                <input
+                    type="button"
+                    value="&#9668;"
+                    onClick={() => handleChangeActiveYear(-1)}
+                />
+                <span>{state.active.getFullYear()}</span>
+                <input
+                    type="button"
+                    value="&#9658;"
+                    onClick={() => handleChangeActiveYear(1)}
+                />
+            </div>
+            <select name="month" value={PARAMS[state.active.getMonth()]} onChange={handleChangeActiveMonth}>
+                {PARAMS.months.map(month => <option value={month} key={month}>{month}</option>)}
+            </select>
+        </div>
 
         <table className="calendar__body">
             <thead>
@@ -28,10 +57,16 @@ export const App = ({ initDate = new Date() }) => {
                 </tr>
             </thead>
             <tbody>
-                {weaksOfMonth.map(weak =>
+                {monthToArray(state.active).map(weak =>
                     <tr key={Math.random() * 100000}>
                         {weak.map(date => {
-                            return <td className={`calendar__date${date.getMonth() == state.active.getMonth() ? "" : " date--inactive" }`} key={Math.random() * 100000}>
+                            
+                            //!!!времянка, переделать
+                            const attr = ['calendar__date']
+                            date.getMonth() !== state.active.getMonth() && attr.push('date--inactive')
+                            date.getDate() == state.today.getDate() && date.getMonth() == state.today.getMonth() && date.getFullYear() == state.today.getFullYear() && attr.push('date--today')
+
+                            return <td className={attr.join(' ')} key={Math.random() * 100000}>
                                 {date ? date.getDate() : ""}
                             </td>
                         })}
